@@ -49,6 +49,12 @@
   .crystal-item:last-child { border-bottom: none; }
   .crystal-item span { font-size: 0.875rem; }
   .crystal-item .info { font-size: 0.75rem; color: #6e6e73; margin-left: 0.5rem; }
+  .formula {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 8px;
+    padding: 0.75rem; margin-top: 0.75rem; font-size: 0.8125rem;
+    line-height: 1.5; color: #1d1d1f;
+  }
+  .formula code { font-family: "SF Mono", "JetBrains Mono", "Cascadia Code", monospace; }
 </style>
 
 <script>
@@ -2470,7 +2476,12 @@ var QmixEngineBundle = (() => {
     if (!pol) throw new Error(`Polarization index ${polIndex} out of range`);
     let lambdaP = pumpNm, blue = Math.min(red1Nm, red2Nm), red = Math.max(red1Nm, red2Nm), nPumpVec = CrystalDB.compute(crystal, temperatureKelvin, lambdaP);
     if (nPumpVec.some((v) => v === 0)) return [];
-    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
+    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), hlCoeff = entry.hotLengthCoeffs[polIndex], alpha = 0;
+    if (hlCoeff) {
+      let hlT = 1 + hlCoeff.lin * (temperatureKelvin - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin - hlCoeff.Tref) ** 2;
+      alpha = 1 + hlCoeff.lin * (temperatureKelvin + 1 - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin + 1 - hlCoeff.Tref) ** 2 - hlT;
+    }
+    let type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
     for (let i = 0; i < npts; i++) {
       let lambdaI = range[0] + deltaLambda * i, lambdaS = 1 / (1 / lambdaP - 1 / lambdaI);
       if (!Number.isFinite(lambdaS) || lambdaS <= 0 || lambdaS < 0.9 * lambdaP) continue;
@@ -2480,7 +2491,7 @@ var QmixEngineBundle = (() => {
       if (nIn === 0 || nI === 0 || nIp === 0) continue;
       let omegaN = nPump / lambdaP - nS / lambdaS - nI / lambdaI;
       if (Math.abs(omegaN) < 1e-20) continue;
-      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / 1 - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / Math.abs(grpS)), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / Math.abs(grpI)), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / Math.abs(grpP));
+      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / (1 + alpha) - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / grpS), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / grpI), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / grpP);
       rows.push({
         signalNm: lambdaS,
         idlerNm: lambdaI,
@@ -2738,11 +2749,16 @@ window.fetch = inlineFetch;
       <div><label for="rangeMin">Range min (nm)</label><input id="rangeMin" type="number" value="200"></div>
       <div><label for="rangeMax">Range max (nm)</label><input id="rangeMax" type="number" value="5000"></div>
     </div>
-    <div style="margin-top:0.75rem"><label>Sellmeier coefficients (A B C D E per row, &lambda; in &micro;m)</label></div>
+    <div class="formula">
+      <div><strong>Refractive-index model used for custom crystals</strong></div>
+      <div><code>n(&lambda;,T) = sqrt(abs(A + B / (&lambda;&sup2; - C) - D&lambda;&sup2;)) + &Delta;n(&lambda;,T)</code></div>
+      <div><code>&lambda;</code> is in micrometers. Enter one row of <code>A B C D</code> coefficients for each principal index. Extra values in a row are ignored by this page.</div>
+    </div>
+    <div style="margin-top:0.75rem"><label>Sellmeier coefficients (A B C D per row, &lambda; in &micro;m)</label></div>
     <div class="coeff-grid" id="coeffRows">
-      <div class="full"><label>n<sub>o</sub> / n<sub>x</sub></label><input class="coeff-input" id="coeff0" value="2.7359 0.01878 0.01822 -0.01471 0.0006081"></div>
-      <div class="full"><label>n<sub>e</sub> / n<sub>y</sub></label><input class="coeff-input" id="coeff1" value="2.3753 0.01224 0.01667 -0.01627 0.0005716"></div>
-      <div class="full" id="coeff2row" style="display:none"><label>n<sub>z</sub></label><input class="coeff-input" id="coeff2" value="2.5865 0.0131 0.01223 -0.01862 0.000045778"></div>
+      <div class="full"><label>n<sub>o</sub> / n<sub>x</sub></label><input class="coeff-input" id="coeff0" value="2.7359 0.01878 0.01822 0.01471"></div>
+      <div class="full"><label>n<sub>e</sub> / n<sub>y</sub></label><input class="coeff-input" id="coeff1" value="2.3753 0.01224 0.01667 0.01627"></div>
+      <div class="full" id="coeff2row" style="display:none"><label>n<sub>z</sub></label><input class="coeff-input" id="coeff2" value="2.5865 0.0131 0.01223 0.01862"></div>
     </div>
     <div style="margin-top:0.5rem">
       <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer">
@@ -2756,6 +2772,12 @@ window.fetch = inlineFetch;
         <div class="full"><input class="coeff-input" id="tempCoeff1" value="0.0413 -0.2119 0.4408 -1.2749"></div>
         <div class="full" id="tempCoeff2row" style="display:none"><input class="coeff-input" id="tempCoeff2" value="0 0 0 0"></div>
       </div>
+    </div>
+    <div class="formula">
+      <div><strong>Nonlinear model used by the uniaxial Qmix calculation</strong></div>
+      <div><code>d1 = A cos&theta; + B sin&theta;</code></div>
+      <div><code>d2 = C cos&sup2;&theta; + D sin(2&theta;)</code></div>
+      <div>These values are stored with the custom crystal and used by the standard uniaxial phase-matching calculation. Biaxial custom nonlinear tensors are not fully represented by this simplified form.</div>
     </div>
     <div style="margin-top:0.75rem">
       <label>Nonlinear coefficients</label>
@@ -2818,8 +2840,8 @@ function saveCustom() {
   for (let i = 0; i < numPol; i++) {
     const val = document.getElementById("coeff" + i).value.trim();
     const parts = val.split(/\s+/).map(Number);
-    if (parts.length < 5 || parts.some(isNaN)) return showMsg("Invalid coefficients for row " + (i+1), "err");
-    coeffs.push(parts);
+    if (parts.length < 4 || parts.some(isNaN)) return showMsg("Invalid coefficients for row " + (i+1), "err");
+    coeffs.push(parts.slice(0, 4));
   }
 
   let tempCoeffs = undefined;

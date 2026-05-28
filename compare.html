@@ -2491,7 +2491,12 @@ var QmixEngineBundle = (() => {
     if (!pol) throw new Error(`Polarization index ${polIndex} out of range`);
     let lambdaP = pumpNm, blue = Math.min(red1Nm, red2Nm), red = Math.max(red1Nm, red2Nm), nPumpVec = CrystalDB.compute(crystal, temperatureKelvin, lambdaP);
     if (nPumpVec.some((v) => v === 0)) return [];
-    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
+    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), hlCoeff = entry.hotLengthCoeffs[polIndex], alpha = 0;
+    if (hlCoeff) {
+      let hlT = 1 + hlCoeff.lin * (temperatureKelvin - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin - hlCoeff.Tref) ** 2;
+      alpha = 1 + hlCoeff.lin * (temperatureKelvin + 1 - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin + 1 - hlCoeff.Tref) ** 2 - hlT;
+    }
+    let type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
     for (let i = 0; i < npts; i++) {
       let lambdaI = range[0] + deltaLambda * i, lambdaS = 1 / (1 / lambdaP - 1 / lambdaI);
       if (!Number.isFinite(lambdaS) || lambdaS <= 0 || lambdaS < 0.9 * lambdaP) continue;
@@ -2501,7 +2506,7 @@ var QmixEngineBundle = (() => {
       if (nIn === 0 || nI === 0 || nIp === 0) continue;
       let omegaN = nPump / lambdaP - nS / lambdaS - nI / lambdaI;
       if (Math.abs(omegaN) < 1e-20) continue;
-      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / 1 - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / Math.abs(grpS)), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / Math.abs(grpI)), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / Math.abs(grpP));
+      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / (1 + alpha) - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / grpS), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / grpI), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / grpP);
       rows.push({
         signalNm: lambdaS,
         idlerNm: lambdaI,
@@ -2802,6 +2807,7 @@ window.fetch = inlineFetch;
             <th data-col="l2">&lambda;&#8322; <span class="sort-icon"></span></th>
             <th data-col="l3">&lambda;&#8323; <span class="sort-icon"></span></th>
             <th data-col="deff">d_eff <span class="sort-icon"></span></th>
+            <th data-col="gvi">GVI <span class="sort-icon"></span></th>
             <th data-col="temp">Temp. <span class="sort-icon"></span></th>
             <th data-col="angtol">Ang. tol. <span class="sort-icon"></span></th>
             <th data-col="s0l2">S<sub>o</sub>L&sup2; <span class="sort-icon"></span></th>
@@ -2872,7 +2878,7 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
   const planes = ["XY", "XZ", "YZ"];
 
   const tbody = document.getElementById("resultsBody");
-  tbody.innerHTML = "<tr><td colspan='14' style='text-align:center;color:#999;padding:2rem'>Calculating...</td></tr>";
+  tbody.innerHTML = "<tr><td colspan='15' style='text-align:center;color:#999;padding:2rem'>Calculating...</td></tr>";
 
   const rows = [];
 
@@ -2895,6 +2901,7 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
         for (const r of data) {
           rows.push({
             crystal,
+            crystalType: type,
             plane,
             polarizations: r.polarizations,
             thetaDeg: r.thetaDeg,
@@ -2906,6 +2913,7 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
             angleToleranceMradCm: r.angleToleranceMradCm,
             walkoffMrad: r.walkoffMrad,
             gddFs2PerMm: r.gddFs2PerMm,
+            groupVelocityIndex: r.groupVelocityIndex,
           });
         }
       } catch {}
@@ -2935,7 +2943,7 @@ function renderTable(rows) {
   const tbody = document.getElementById("resultsBody");
 
   if (filtered.length === 0) {
-    tbody.innerHTML = "<tr><td colspan='14' style='text-align:center;color:#999;padding:2rem'>No results</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='15' style='text-align:center;color:#999;padding:2rem'>No results</td></tr>";
     return;
   }
 
@@ -2971,6 +2979,7 @@ function getSortValue(row, col) {
     case "l2": return row.wavelengthsNm[1];
     case "l3": return row.wavelengthsNm[2];
     case "deff": return row.dEffPmPerV;
+    case "gvi": return row.groupVelocityIndex ? Math.max(...row.groupVelocityIndex) : 0;
     case "temp": return row.temperatureRangeKCm;
     case "angtol": return row.angleToleranceMradCm;
     case "s0l2": return row.s0L2Watt;
@@ -2986,16 +2995,22 @@ function renderRows(rows) {
     const w = r.wavelengthsNm;
     const wo = r.walkoffMrad.map(v => v.toFixed(2)).join(", ");
     const zeroClass = r.dEffPmPerV === 0 ? "zero" : "";
+    const isUniaxial = r.crystalType === "uniaxial";
+    const planeCell = isUniaxial ? "\u2014" : r.plane;
+    const phiCell = isUniaxial ? "\u2014" : r.phiDeg.toFixed(4);
+    const gvi = r.groupVelocityIndex;
+    const gviCell = gvi ? gvi.map(function(v) { return v.toFixed(4); }).join(", ") : "";
     return `<tr class="${zeroClass}">
       <td>${r.crystal}</td>
-      <td>${r.plane}</td>
+      <td>${planeCell}</td>
       <td>${r.polarizations}</td>
       <td>${r.thetaDeg.toFixed(4)}</td>
-      <td>${r.phiDeg.toFixed(4)}</td>
+      <td>${phiCell}</td>
       <td>${w[0].toFixed(2)}</td>
       <td>${w[1].toFixed(2)}</td>
       <td>${w[2].toFixed(2)}</td>
       <td>${r.dEffPmPerV !== 0 ? r.dEffPmPerV.toExponential(3) : "0"}</td>
+      <td>${gviCell}</td>
       <td>${r.temperatureRangeKCm > 1e5 ? "\u221E" : r.temperatureRangeKCm.toFixed(2)}</td>
       <td>${r.angleToleranceMradCm.toFixed(4)}</td>
       <td>${r.s0L2Watt !== undefined ? r.s0L2Watt.toExponential(3) : ""}</td>
@@ -3029,17 +3044,22 @@ document.getElementById("results").addEventListener("click", (e) => {
 document.getElementById("exportCsv").addEventListener("click", () => {
   const rows = getTableData();
   if (!rows.length) return;
-  const header = "Crystal,Plane,Pol,Theta(deg),Phi(deg),Lambda1(nm),Lambda2(nm),Lambda3(nm),d_eff(pm/V),S_oL2(W),Temp(K-cm),AngTol(mrad-cm),Walkoff(mrad),GDD(fs2/mm)";
-  const csv = [header, ...rows.map(r => [
-    r.crystal, r.plane, r.polarizations, r.thetaDeg.toFixed(4), r.phiDeg.toFixed(4),
-    r.wavelengthsNm[0].toFixed(2), r.wavelengthsNm[1].toFixed(2), r.wavelengthsNm[2].toFixed(2),
-    r.dEffPmPerV !== 0 ? r.dEffPmPerV.toExponential(3) : "0",
-    r.s0L2Watt !== undefined ? r.s0L2Watt.toExponential(3) : "",
-    r.temperatureRangeKCm > 1e5 ? "" : r.temperatureRangeKCm.toFixed(2),
-    r.angleToleranceMradCm.toFixed(4),
-    r.walkoffMrad.map(v => v.toFixed(2)).join(";"),
-    r.gddFs2PerMm.map(v => v.toFixed(1)).join(";"),
-  ].join(","))].join("\n");
+  const header = "Crystal,Plane,Pol,Theta(deg),Phi(deg),Lambda1(nm),Lambda2(nm),Lambda3(nm),d_eff(pm/V),GVI,Temp(K-cm),AngTol(mrad-cm),S_oL2(W),Walkoff(mrad),GDD(fs2/mm)";
+  const csv = [header, ...rows.map(r => {
+    const isUniaxial = r.crystalType === "uniaxial";
+    return [
+      r.crystal, isUniaxial ? "" : r.plane, r.polarizations, r.thetaDeg.toFixed(4),
+      isUniaxial ? "" : r.phiDeg.toFixed(4),
+      r.wavelengthsNm[0].toFixed(2), r.wavelengthsNm[1].toFixed(2), r.wavelengthsNm[2].toFixed(2),
+      r.dEffPmPerV !== 0 ? r.dEffPmPerV.toExponential(3) : "0",
+      r.groupVelocityIndex ? r.groupVelocityIndex.map(function(v) { return v.toFixed(4); }).join(";") : "",
+      r.temperatureRangeKCm > 1e5 ? "" : r.temperatureRangeKCm.toFixed(2),
+      r.angleToleranceMradCm.toFixed(4),
+      r.s0L2Watt !== undefined ? r.s0L2Watt.toExponential(3) : "",
+      r.walkoffMrad.map(v => v.toFixed(2)).join(";"),
+      r.gddFs2PerMm.map(v => v.toFixed(1)).join(";"),
+    ].join(",");
+  })].join("\n");
   download(csv, "qmix-comparison.csv", "text/csv");
 });
 
@@ -3057,9 +3077,9 @@ function getTableData() {
   const tbody = document.getElementById("resultsBody");
   for (const tr of tbody.querySelectorAll("tr")) {
     const td = tr.querySelectorAll("td");
-    if (td.length < 14) continue;
-    const walkoff = td[12].textContent.split(", ").map(Number);
-    const gdd = td[13].textContent.split(", ").map(Number);
+    if (td.length < 15) continue;
+    const walkoff = td[13].textContent.split(", ").map(Number);
+    const gdd = td[14].textContent.split(", ").map(Number);
     rows.push({
       crystal: td[0].textContent,
       plane: td[1].textContent,
@@ -3068,7 +3088,8 @@ function getTableData() {
       phiDeg: parseFloat(td[4].textContent),
       wavelengthsNm: [parseFloat(td[5].textContent), parseFloat(td[6].textContent), parseFloat(td[7].textContent)],
       dEffPmPerV: parseFloat(td[8].textContent),
-      s0L2Watt: parseFloat(td[9].textContent) || 0,
+      groupVelocityIndex: td[9].textContent.split(", ").map(Number),
+      s0L2Watt: parseFloat(td[12].textContent) || 0,
       temperatureRangeKCm: parseFloat(td[10].textContent),
       angleToleranceMradCm: parseFloat(td[11].textContent),
       walkoffMrad: walkoff,
