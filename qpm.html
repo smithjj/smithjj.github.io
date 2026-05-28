@@ -9,10 +9,11 @@
   *, *::before, *::after { box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0; padding: 1.5rem;
+    margin: 0; padding: 1.5rem 0;
     background: #f5f5f7; color: #1d1d1f;
   }
-  .container { max-width: 1100px; margin: 0 auto; }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1100px) 220px; }
+  .container { grid-column: 2; padding: 0 1rem; }
   h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.25rem; }
   p.sub { color: #6e6e73; margin: 0 0 1rem; font-size: 0.875rem; }
   .card { background: #fff; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 1rem; }
@@ -39,6 +40,101 @@
   th.desc .sort-icon { border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #0071e3; }
   td:first-child, th:first-child { text-align: left; }
   @media print { .no-print { display: none !important; } body { padding: 0; background: #fff; } }
+  .sidebar { padding: 0 1rem; position: sticky; top: 2rem; margin-top: 1rem; }
+  .sidebar-left { grid-column: 1; }
+  .sidebar-right { grid-column: 3; }
+  .sidebar a { text-decoration: none; color: inherit; }
+  .sidebar img { width: 100%; border-radius: 8px; display: block; }
+  .sidebar p { font-size: 0.75rem; color: #6e6e73; line-height: 1.4; margin: 0.5rem 0; }
+  :root {
+    --bg: #edf3fb;
+    --card: #fff;
+    --card-soft: #f8fbff;
+    --ink: #172033;
+    --muted: #64748b;
+    --line: #d8e2ef;
+    --accent: #0071e3;
+    --accent-dark: #005bb8;
+    --accent-soft: #e8f3ff;
+    --danger: #d32f2f;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, .08), 0 10px 24px rgba(15, 23, 42, .04);
+    --shadow: 0 16px 36px rgba(15, 23, 42, .12);
+    --focus: 0 0 0 3px rgba(0, 113, 227, .18);
+  }
+  body {
+    background: radial-gradient(circle at top left, rgba(0,113,227,.13), transparent 34rem), linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+    color: var(--ink);
+  }
+  .layout { justify-content: center; }
+  .container { width: 100%; }
+  .page-header {
+    position: relative; overflow: hidden; margin-bottom: 1.1rem; padding: 1.15rem 1.25rem;
+    border: 1px solid rgba(0,113,227,.14); border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(243,248,255,.94));
+    box-shadow: var(--shadow);
+  }
+  .page-header::before {
+    content: ""; position: absolute; inset: -3rem auto auto -3rem; width: 9rem; height: 9rem;
+    background: radial-gradient(circle, rgba(0,113,227,.16), transparent 68%); pointer-events: none;
+  }
+  .page-header > * { position: relative; }
+  .page-kicker { color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .page-header h1 { margin: .15rem 0 .35rem; font-size: 1.7rem; letter-spacing: -.03em; color: var(--ink); }
+  .page-header .sub { margin: 0; color: var(--muted); }
+  .module-nav { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .95rem; }
+  .module-nav a, .module-nav .nav-current {
+    display: inline-flex; align-items: center; min-height: 2rem; padding: .35rem .7rem;
+    border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted);
+    font-size: .8125rem; font-weight: 650; line-height: 1; text-decoration: none;
+  }
+  .module-nav a:hover { border-color: rgba(0,113,227,.35); background: var(--accent-soft); color: var(--accent); }
+  .module-nav .nav-current { border-color: var(--accent); background: var(--accent); color: #fff; box-shadow: 0 8px 18px rgba(0,113,227,.22); }
+  .card { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  label { color: var(--muted); letter-spacing: .01em; }
+  select, input, textarea {
+    border-color: var(--line); border-radius: var(--radius-sm); color: var(--ink);
+    box-shadow: inset 0 1px 1px rgba(15,23,42,.03); transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  select:hover, input:hover, textarea:hover { border-color: #b7c7da; }
+  select:focus, input:focus, textarea:focus { border-color: var(--accent); box-shadow: var(--focus); }
+  input[type="checkbox"], input[type="radio"] { width: auto; accent-color: var(--accent); }
+  button {
+    background: linear-gradient(180deg, #0b7bea, var(--accent)); border: 1px solid rgba(255,255,255,.25);
+    border-radius: var(--radius-sm); box-shadow: 0 8px 16px rgba(0,113,227,.2); transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  button:hover { background: linear-gradient(180deg, #0a72db, var(--accent-dark)); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,91,184,.24); }
+  button:disabled { transform: none; box-shadow: none; }
+  button.secondary, button.sec { background: #eef3fa; color: var(--ink); border-color: var(--line); box-shadow: none; }
+  button.secondary:hover, button.sec:hover { background: #e2e9f3; box-shadow: none; }
+  button.danger { background: var(--danger); border-color: transparent; }
+  button.danger:hover { background: #b71c1c; }
+  .result, .crystal-info { background: var(--card-soft); border-color: var(--line); border-radius: var(--radius-sm); }
+  .sidebar { align-self: start; padding: 0 .75rem; }
+  .ad-card {
+    display: block; padding: .8rem; border: 1px solid var(--line); border-radius: 18px;
+    background: rgba(255,255,255,.94); box-shadow: var(--shadow-sm); color: var(--ink); text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .ad-card:hover { transform: translateY(-2px); border-color: rgba(0,113,227,.32); box-shadow: var(--shadow); }
+  .ad-card img { width: 100%; height: 170px; object-fit: contain; padding: .35rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .ad-kicker { display: block; margin-bottom: .45rem; color: var(--accent); font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  .ad-title { display: block; margin-top: .7rem; font-size: .95rem; line-height: 1.2; }
+  .ad-card p { color: var(--muted); font-size: .75rem; line-height: 1.45; margin: .45rem 0 .7rem; }
+  .ad-cta { color: var(--accent); font-size: .75rem; font-weight: 700; }
+  .wrap { border-radius: var(--radius); }
+  table { border-collapse: separate; border-spacing: 0; }
+  th { background: #f4f8fc; color: var(--muted); }
+  th, td { border-bottom-color: var(--line); }
+  tbody tr:nth-child(even) { background: #fbfdff; }
+  tbody tr:hover { background: #eef6ff; }
+  .crystal-grid { background: var(--card-soft); border-color: var(--line); }
+  .crystal-grid label { border-radius: 8px; padding: .18rem .25rem; }
+  .crystal-grid label:hover { background: #fff; }
+  @media (max-width: 1100px) { .layout { display: block; } .container { padding: 0 1rem; } .sidebar { display: none; } }
+  @media (max-width: 640px) { body { padding: 1rem 0; } .page-header { padding: 1rem; } .page-header h1 { font-size: 1.45rem; } .grid { grid-template-columns: 1fr; } }
+  @media print { body { background: #fff; } .page-header, .card { box-shadow: none; } .sidebar { display: none !important; } }
 </style>
 
 <script>
@@ -2460,12 +2556,7 @@ var QmixEngineBundle = (() => {
     if (!pol) throw new Error(`Polarization index ${polIndex} out of range`);
     let lambdaP = pumpNm, blue = Math.min(red1Nm, red2Nm), red = Math.max(red1Nm, red2Nm), nPumpVec = CrystalDB.compute(crystal, temperatureKelvin, lambdaP);
     if (nPumpVec.some((v) => v === 0)) return [];
-    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), hlCoeff = entry.hotLengthCoeffs[polIndex], alpha = 0;
-    if (hlCoeff) {
-      let hlT = 1 + hlCoeff.lin * (temperatureKelvin - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin - hlCoeff.Tref) ** 2;
-      alpha = 1 + hlCoeff.lin * (temperatureKelvin + 1 - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin + 1 - hlCoeff.Tref) ** 2 - hlT;
-    }
-    let type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
+    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
     for (let i = 0; i < npts; i++) {
       let lambdaI = range[0] + deltaLambda * i, lambdaS = 1 / (1 / lambdaP - 1 / lambdaI);
       if (!Number.isFinite(lambdaS) || lambdaS <= 0 || lambdaS < 0.9 * lambdaP) continue;
@@ -2475,7 +2566,7 @@ var QmixEngineBundle = (() => {
       if (nIn === 0 || nI === 0 || nIp === 0) continue;
       let omegaN = nPump / lambdaP - nS / lambdaS - nI / lambdaI;
       if (Math.abs(omegaN) < 1e-20) continue;
-      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / (1 + alpha) - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / grpS), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / grpI), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / grpP);
+      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / 1 - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / Math.abs(grpS)), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / Math.abs(grpI)), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / Math.abs(grpP));
       rows.push({
         signalNm: lambdaS,
         idlerNm: lambdaI,
@@ -2722,9 +2813,29 @@ window.fetch = inlineFetch;
 </script>
 </head>
 <body>
+<div class="layout">
+<div class="sidebar sidebar-left">
+  <a class="ad-card" href="https://as-photonics.com/book" target="_blank" rel="noopener">
+    <span class="ad-kicker">Textbook</span>
+    <img src="thebook.webp" alt="The Book">
+    <strong class="ad-title">Understand the numbers</strong>
+    <p>Do you actually want to understand what all those numbers mean? <em>The Book</em> teaches nonlinear optics from the ground up, so you can get the most out of Qmix.</p>
+    <span class="ad-cta">Learn more</span>
+  </a>
+</div>
 <div class="container">
-  <h1>Qmix &mdash; Quasi-phase-matching</h1>
-  <p class="sub">Poling period, d_eff, GVM, GDD, temperature acceptance, and tuning for periodically poled crystals</p>
+  <header class="page-header">
+    <div class="page-kicker">Qmix toolkit</div>
+    <h1>Qmix &mdash; Quasi-phase-matching</h1>
+    <p class="sub">Poling period, d_eff, GVM, GDD, temperature acceptance, and tuning for periodically poled crystals</p>
+    <nav class="module-nav" aria-label="Qmix modules">
+      <a href="index.html">Qmix</a>
+      <a href="compare.html">Compare crystals</a>
+      <span class="nav-current">QPM</span>
+      <a href="refractive-index.html">Refractive index</a>
+      <a href="custom.html">Custom crystals</a>
+    </nav>
+  </header>
 
   <div class="card no-print">
     <div class="row">
@@ -2747,7 +2858,9 @@ window.fetch = inlineFetch;
       <label><input type="radio" name="yaxis" value="tempRangeKCm" onchange="toggleTune()"> Temp range</label>
       <label><input type="radio" name="yaxis" value="opoBwGHzCm" onchange="toggleTune()"> OPO-BW</label>
       <label><input type="radio" name="yaxis" value="mixBwGHzCm" onchange="toggleTune()"> Mix-BW</label>
-      <label><input type="radio" name="yaxis" value="gviAll" onchange="toggleTune()"> Grp vel</label>
+      <label><input type="radio" name="yaxis" value="gviSignal" onchange="toggleTune()"> Grp vel (signal)</label>
+      <label><input type="radio" name="yaxis" value="gviIdler" onchange="toggleTune()"> Grp vel (idler)</label>
+      <label><input type="radio" name="yaxis" value="gviPump" onchange="toggleTune()"> Grp vel (pump)</label>
       <label><input type="radio" name="yaxis" value="gdd" onchange="toggleTune()"> GDD</label>
       <label><input type="radio" name="yaxis" value="tempTune" onchange="toggleTune()"> Temp tune</label>
       <label><input type="radio" name="yaxis" value="pumpTune" onchange="toggleTune()"> Pump tune</label>
@@ -2764,12 +2877,6 @@ window.fetch = inlineFetch;
       <div><label for="pMax">Pump max (nm)</label><input id="pMax" type="number" value="600" step="any"></div>
       <div><label for="pSteps">Steps</label><input id="pSteps" type="number" value="50" step="1"></div>
     </div>
-    <div class="full" style="margin-top:0.75rem">
-      <label for="presets">Presets</label>
-      <select id="presets">
-        <option value="">&mdash; Load a QPM preset &mdash;</option>
-      </select>
-    </div>
   </div>
 
   <div id="chart" class="card"></div>
@@ -2783,257 +2890,27 @@ window.fetch = inlineFetch;
     </div>
   </div>
 </div>
-
-<div id="saveModal" class="modal-overlay" style="display:none">
-  <div class="modal">
-    <h2>Save QPM preset</h2>
-    <label for="presetName">Preset name</label>
-    <input id="presetName" type="text" placeholder="My QPM preset">
-    <div class="btn-row">
-      <button id="confirmSave">Save</button>
-      <button id="cancelSave" class="secondary">Cancel</button>
-    </div>
-  </div>
+<div class="sidebar sidebar-right">
+  <a class="ad-card" href="https://as-photonics.com/mlSNLO" target="_blank" rel="noopener">
+    <span class="ad-kicker">Software</span>
+    <img src="mlSNLO.webp" alt="mlSNLO">
+    <strong class="ad-title">Automate design scans</strong>
+    <p><strong>mlSNLO</strong> is a versatile MATLAB App for nonlinear optics. Write batch scripts to automate calculations and explore design spaces.</p>
+    <span class="ad-cta">Explore mlSNLO</span>
+  </a>
 </div>
-
-<div id="manageModal" class="modal-overlay" style="display:none">
-  <div class="modal">
-    <h2>Manage QPM presets</h2>
-    <div id="presetList"></div>
-    <div class="btn-row"><button id="closeManage" class="secondary">Close</button></div>
-  </div>
 </div>
-
-<style>
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.35);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100;
-  }
-  .modal {
-    background: #fff; border-radius: 14px; padding: 1.5rem;
-    width: 90%; max-width: 420px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-  }
-  .modal h2 { margin: 0 0 0.75rem; font-size: 1.125rem; }
-  .modal label { margin-top: 0.75rem; }
-  .modal .btn-row { display: flex; gap: 0.5rem; margin-top: 1rem; }
-  .modal .btn-row button { flex: 1; }
-  button.secondary { background: #e8e8ed; color: #1d1d1f; }
-  button.secondary:hover { background: #d1d1d6; }
-  button.danger { background: #d32f2f; }
-  button.danger:hover { background: #b71c1c; }
-  .preset-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.5rem 0; border-bottom: 1px solid #e8e8ed;
-  }
-  .preset-item:last-child { border-bottom: none; }
-  .preset-item span { font-size: 0.9375rem; }
-  .preset-item button { padding: 0.25rem 0.75rem; font-size: 0.8125rem; width: auto; }
-</style>
 
 <script>
 const POL_CACHE = {};
-
-const BUILT_IN_PRESETS = [
-  { name: "LNB C-band SHG 1550 nm", data: { crystal: "LNB_C", pump: 775, red1: 1500, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "LNB C-band SHG 1064 nm", data: { crystal: "LNB_C", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "LNB C-band DFG 1550+1064", data: { crystal: "LNB_C", pump: 532, red1: 1550, red2: 3000, temperature: 300, polIndex: 0 } },
-  { name: "LNB C-band OPO 775 nm", data: { crystal: "LNB_C", pump: 775, red1: 1400, red2: 1800, temperature: 300, polIndex: 0 } },
-  { name: "LNB C-band OPO 532 nm", data: { crystal: "LNB_C", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "LNB C 120\u00B0C 532 nm OPO", data: { crystal: "LNB_C", pump: 532, red1: 800, red2: 2000, temperature: 393, polIndex: 0 } },
-  { name: "LNB C 200\u00B0C 532 nm OPO", data: { crystal: "LNB_C", pump: 532, red1: 800, red2: 2000, temperature: 473, polIndex: 0 } },
-  { name: "LNB C-band SHG 780 nm", data: { crystal: "LNB_C", pump: 390, red1: 700, red2: 1000, temperature: 300, polIndex: 0 } },
-  { name: "LNB C 800 nm pump OPO", data: { crystal: "LNB_C", pump: 800, red1: 1100, red2: 3000, temperature: 300, polIndex: 0 } },
-  { name: "LNB C 1064 nm pump OPO", data: { crystal: "LNB_C", pump: 1064, red1: 1600, red2: 3200, temperature: 300, polIndex: 0 } },
-  { name: "LNB M SHG 1064 nm", data: { crystal: "LNB_M", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "LNB M OPO 532 nm", data: { crystal: "LNB_M", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "LNB M C-band DFG", data: { crystal: "LNB_M", pump: 532, red1: 1500, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "LNB M SHG 775 nm", data: { crystal: "LNB_M", pump: 387.5, red1: 700, red2: 900, temperature: 300, polIndex: 0 } },
-  { name: "LITA C SHG 1064 nm", data: { crystal: "LITA_C", pump: 532, red1: 1000, red2: 1200, temperature: 300, polIndex: 0 } },
-  { name: "LITA C OPO 532 nm", data: { crystal: "LITA_C", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "KNBO3 SHG 860 nm", data: { crystal: "KNBO3", pump: 430, red1: 600, red2: 1200, temperature: 300, polIndex: 0 } },
-  { name: "KNBO3 OPO 430 nm", data: { crystal: "KNBO3", pump: 430, red1: 600, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "KTP_F SHG 1064 nm ZZZ-x", data: { crystal: "KTP_F", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "KTP_F OPO 532 nm ZZZ-x", data: { crystal: "KTP_F", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "KTP_F OPO 532 nm ZZZ-y", data: { crystal: "KTP_F", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 1 } },
-  { name: "KTP_H SHG 1064 nm ZZZ-x", data: { crystal: "KTP_H", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "KTP_H OPO 532 nm ZZZ-x", data: { crystal: "KTP_H", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "KTA_1 SHG 1064 nm ZZZ-x", data: { crystal: "KTA_1", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "KTA_1 OPO 532 nm ZZZ-x", data: { crystal: "KTA_1", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "RTA SHG 1064 nm ZZZ-x", data: { crystal: "RTA", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "RTA OPO 532 nm ZZZ-x", data: { crystal: "RTA", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "GAAS SHG 4 \u00b5m", data: { crystal: "GAAS", pump: 2000, red1: 3000, red2: 6000, temperature: 300, polIndex: 0 } },
-  { name: "GAAS DFG 4+6 \u00b5m", data: { crystal: "GAAS", pump: 2400, red1: 3000, red2: 12000, temperature: 300, polIndex: 0 } },
-  { name: "ZNSE SHG 4 \u00b5m", data: { crystal: "ZNSE", pump: 2000, red1: 3000, red2: 6000, temperature: 300, polIndex: 0 } },
-  { name: "ZNSE DFG 4+6 \u00b5m", data: { crystal: "ZNSE", pump: 2400, red1: 3000, red2: 12000, temperature: 300, polIndex: 0 } },
-  { name: "LBGO SHG 1064 nm", data: { crystal: "LBGO", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "LBGO OPO 532 nm", data: { crystal: "LBGO", pump: 532, red1: 800, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "LBGO C-band DFG", data: { crystal: "LBGO", pump: 532, red1: 1500, red2: 2000, temperature: 300, polIndex: 0 } },
-  { name: "LNB C temp tune 6.78 \u00b5m", data: { crystal: "LNB_C", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-  { name: "LNB C pump tune 6.78 \u00b5m", data: { crystal: "LNB_C", pump: 532, red1: 900, red2: 1500, temperature: 300, polIndex: 0 } },
-];
-
-const STORAGE_KEY = "qmix-qpm-user-presets";
-
-function loadUserPresets() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-  catch { return {}; }
-}
-function saveUserPresets(presets) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(presets));
-}
-
-function getFormValues() {
-  return {
-    crystal: document.getElementById("crystal").value,
-    pump: parseFloat(document.getElementById("pump").value),
-    red1: parseFloat(document.getElementById("red1").value),
-    red2: parseFloat(document.getElementById("red2").value),
-    temperature: parseFloat(document.getElementById("temperature").value),
-    polIndex: parseInt(document.getElementById("polarization").value),
-  };
-}
-function setFormValues(v) {
-  document.getElementById("crystal").value = v.crystal;
-  document.getElementById("pump").value = v.pump;
-  document.getElementById("red1").value = v.red1;
-  document.getElementById("red2").value = v.red2;
-  document.getElementById("temperature").value = v.temperature;
-  loadPols(v.crystal, v.polIndex);
-}
-
-function rebuildPresetDropdown(selectedName) {
-  const sel = document.getElementById("presets");
-  sel.innerHTML = "<option value=\"\">\u2014 Load a QPM preset \u2014</option>";
-  const userPresets = loadUserPresets();
-  const hasUser = Object.keys(userPresets).length > 0;
-
-  if (BUILT_IN_PRESETS.length) {
-    const g1 = document.createElement("optgroup");
-    g1.label = "Built-in";
-    for (const p of BUILT_IN_PRESETS) {
-      const o = document.createElement("option");
-      o.value = "__builtin__" + p.name;
-      o.textContent = p.name;
-      if (selectedName === p.name && !hasUser) o.selected = true;
-      g1.appendChild(o);
-    }
-    sel.appendChild(g1);
-  }
-  if (hasUser) {
-    const g2 = document.createElement("optgroup");
-    g2.label = "My Presets";
-    for (const [name] of Object.entries(userPresets)) {
-      const o = document.createElement("option");
-      o.value = "__user__" + name;
-      o.textContent = name;
-      if (selectedName === name) o.selected = true;
-      g2.appendChild(o);
-    }
-    sel.appendChild(g2);
-  }
-
-  const sep = document.createElement("option");
-  sep.disabled = true; sep.textContent = "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500";
-  sel.appendChild(sep);
-
-  const saveOpt = document.createElement("option");
-  saveOpt.value = "__save__";
-  saveOpt.textContent = "\u2606  Save current as preset\u2026";
-  sel.appendChild(saveOpt);
-
-  if (hasUser) {
-    const manageOpt = document.createElement("option");
-    manageOpt.value = "__manage__";
-    manageOpt.textContent = "\u2699  Manage presets\u2026";
-    sel.appendChild(manageOpt);
-  }
-}
-
-function applyPreset(name, data) {
-  setFormValues(data);
-  rebuildPresetDropdown(name);
-}
-
-function saveCurrentPreset(name) {
-  const v = getFormValues();
-  const presets = loadUserPresets();
-  presets[name] = v;
-  saveUserPresets(presets);
-  rebuildPresetDropdown(name);
-}
-
-function deletePreset(name) {
-  const presets = loadUserPresets();
-  delete presets[name];
-  saveUserPresets(presets);
-  rebuildPresetDropdown();
-}
-
-function showManageModal() {
-  const list = document.getElementById("presetList");
-  const presets = loadUserPresets();
-  const entries = Object.entries(presets);
-  if (entries.length === 0) {
-    list.innerHTML = "<p style=\"color:#6e6e73;text-align:center\">No saved QPM presets.</p>";
-  } else {
-    list.innerHTML = entries.map(function(e) {
-      var name = e[0];
-      return '<div class="preset-item"><span>' + esc(name) + '</span><button class="danger" data-name="' + escAttr(name) + '">Delete</button></div>';
-    }).join("");
-    list.querySelectorAll(".preset-item button").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        deletePreset(btn.getAttribute("data-name"));
-        showManageModal();
-      });
-    });
-  }
-  document.getElementById("manageModal").style.display = "flex";
-}
-document.getElementById("closeManage").addEventListener("click", function() {
-  document.getElementById("manageModal").style.display = "none";
-});
-
-function showSaveModal() {
-  document.getElementById("presetName").value = "";
-  document.getElementById("saveModal").style.display = "flex";
-  document.getElementById("presetName").focus();
-}
-document.getElementById("cancelSave").addEventListener("click", function() {
-  document.getElementById("saveModal").style.display = "none";
-});
-document.getElementById("confirmSave").addEventListener("click", function() {
-  const name = document.getElementById("presetName").value.trim();
-  if (!name) return;
-  saveCurrentPreset(name);
-  document.getElementById("saveModal").style.display = "none";
-});
-
-function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function escAttr(s) { return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
-function qpmRedWaveTraces(data, ySignal, yIdler, polText) {
-  const isType1 = polText.length >= 2 && polText[0] === polText[1];
-  const signalTrace = {
-    x: data.map(r => r.signalNm), y: data.map(ySignal), type: "scatter", mode: "lines",
-    name: isType1 ? "Signal" : (polText[0] || "Signal") + "-pol.",
-    line: { color: "#0071e3", width: 2 }, showlegend: !isType1,
-  };
-  const idlerTrace = {
-    x: data.map(r => r.idlerNm), y: data.map(yIdler), type: "scatter", mode: "lines",
-    name: isType1 ? "Idler" : (polText[1] || "Idler") + "-pol.",
-    line: { color: isType1 ? "#0071e3" : "#d32f2f", width: 2 }, showlegend: !isType1,
-  };
-  return isType1 ? [idlerTrace, signalTrace] : [signalTrace, idlerTrace];
-}
 
 (async () => {
   const resp = await fetch("/api/qpm-crystals");
   const all = await resp.json();
   const sel = document.getElementById("crystal");
-  sel.innerHTML = all.map(function(c) { return '<option value="' + c + '">' + c + '</option>'; }).join("");
+  sel.innerHTML = all.map(c => `<option value="${c}">${c}</option>`).join("");
   sel.value = "LNB_C";
-  await loadPols("LNB_C");
-  rebuildPresetDropdown();
+  loadPols("LNB_C");
 })();
 
 function toggleTune() {
@@ -3046,43 +2923,13 @@ document.getElementById("crystal").addEventListener("change", function() {
   loadPols(this.value);
 });
 
-async function loadPols(crystal, selectIndex) {
+async function loadPols(crystal) {
   const resp = await fetch("/api/qpm-polarizations?crystal=" + encodeURIComponent(crystal));
   const pols = await resp.json();
   POL_CACHE[crystal] = pols;
   const sel = document.getElementById("polarization");
-  sel.innerHTML = pols.map(function(p, i) { return '<option value="' + i + '">' + p + '</option>'; }).join("");
-  if (selectIndex !== undefined) sel.value = String(selectIndex);
+  sel.innerHTML = pols.map((p, i) => `<option value="${i}">${p}</option>`).join("");
 }
-
-document.getElementById("presets").addEventListener("change", function() {
-  const val = this.value;
-  if (!val) return;
-  this.value = "";
-  if (val === "__save__") { showSaveModal(); return; }
-  if (val === "__manage__") { showManageModal(); return; }
-  if (val.startsWith("__builtin__")) {
-    const name = val.slice("__builtin__".length);
-    const match = BUILT_IN_PRESETS.find(function(p) { return p.name === name; });
-    if (match) applyPreset(name, match.data);
-  } else if (val.startsWith("__user__")) {
-    const name = val.slice("__user__".length);
-    const presets = loadUserPresets();
-    if (presets[name]) applyPreset(name, presets[name]);
-  }
-});
-
-document.addEventListener("keydown", function(e) {
-  if (e.key === "Escape") {
-    document.getElementById("saveModal").style.display = "none";
-    document.getElementById("manageModal").style.display = "none";
-  }
-  if (e.key === "Enter") {
-    if (document.getElementById("saveModal").style.display === "flex") {
-      document.getElementById("confirmSave").click();
-    }
-  }
-});
 
 document.getElementById("calcBtn").addEventListener("click", async () => {
   const btn = document.getElementById("calcBtn");
@@ -3175,73 +3022,43 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
         hovermode: "x unified", legend: { orientation: "h", y: 1.08 },
       };
     } else {
-const enhanced = data.map(r => ({ ...r, opoBwGHzCm: Math.abs(1 / (r.gviSignal - r.gviIdler + 1e-20)) * 30, mixBwSigGHzCm: Math.abs(1 / (r.gviSignal - r.gviPump + 1e-20)) * 30, mixBwIdlGHzCm: Math.abs(1 / (r.gviIdler - r.gviPump + 1e-20)) * 30 }));
-const x = enhanced.map(r => r.signalNm);
+      const enhanced = data.map(r => ({ ...r, opoBwGHzCm: Math.abs(1 / (r.gviSignal - r.gviIdler + 1e-20)) * 30, mixBwSigGHzCm: Math.abs(1 / (r.gviSignal - r.gviPump + 1e-20)) * 30, mixBwIdlGHzCm: Math.abs(1 / (r.gviIdler - r.gviPump + 1e-20)) * 30 }));
+      const labels = { tempRangeKCm: "Temp range (K·cm)", opoBwGHzCm: "OPO-BW (GHz·cm)", mixBwGHzCm: "Mix-BW (GHz·cm)", gviSignal: "GVI signal", gviIdler: "GVI idler", gviPump: "GVI pump" };
+      const x = enhanced.map(r => r.signalNm);
       if (yKey === "gdd") {
-        const polText = document.getElementById("polarization").selectedOptions[0]?.textContent || "";
-        traces = qpmRedWaveTraces(data, r => r.gddSignal, r => r.gddIdler, polText);
-        layout = yLayout("Group delay dispersion [fs^2/mm]", "Wavelength [nm]");
-        const pumpGdd = data[0]?.gddPump;
-        if (Number.isFinite(pumpGdd)) {
-          layout.annotations = [{
-            xref: "paper", yref: "paper", x: 0.5, y: 0.93,
-            text: "Blue gdd = " + pumpGdd.toPrecision(3) + " fs^2/mm",
-            showarrow: false,
-            font: { color: "#1d1d1f" },
-          }];
-        }
+        // MATLAB-style: signal (blue) and idler (red) GDD vs wavelength
+        traces = [
+          { x, y: data.map(r => r.gddSignal), type: "scatter", mode: "lines", name: "Signal", line: { color: "#0071e3", width: 2 } },
+          { x, y: data.map(r => r.gddIdler), type: "scatter", mode: "lines", name: "Idler", line: { color: "#d32f2f", width: 2 } },
+        ];
+        layout = {
+          margin: { t: 24, r: 16, b: 48, l: 56 },
+          xaxis: { title: "Wavelength (nm)", range: [Math.min(r1, r2), Math.max(r1, r2)], showgrid: true, gridcolor: "#eee" },
+          yaxis: { title: "GDD (fs²/mm)", showgrid: true, gridcolor: "#eee" },
+          paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+          font: { family: "-apple-system, BlinkMacSystemFont, sans-serif", size: 12, color: "#6e6e73" },
+          hovermode: "x unified", legend: { orientation: "h", y: 1.08 },
+        };
       } else if (yKey === "mixBwGHzCm") {
-        const xIdl = enhanced.map(r => r.idlerNm);
         traces = [
-          { x, y: enhanced.map(r => r.mixBwSigGHzCm), type: "scatter", mode: "lines", name: "Signal-pump", line: { color: "#0071e3", width: 2 } },
-          { x: xIdl, y: enhanced.map(r => r.mixBwIdlGHzCm), type: "scatter", mode: "lines", name: "Idler-pump", line: { color: "#d32f2f", width: 2 } },
+          { x, y: enhanced.map(r => r.mixBwSigGHzCm), type: "scatter", mode: "lines", name: "Signal-pump", line: { color: "#d32f2f", width: 2 } },
+          { x, y: enhanced.map(r => r.mixBwIdlGHzCm), type: "scatter", mode: "lines", name: "Idler-pump", line: { color: "#0071e3", width: 2 } },
         ];
-        layout = yLayout("Mix-BW (GHz·cm)", "Wavelength (nm)");
-        layout.yaxis.type = "log";
-      } else if (yKey === "tempRangeKCm") {
-        const tr = enhanced.map(r => r.tempRangeKCm);
-        const xIdl = enhanced.map(r => r.idlerNm);
-        traces = [
-          { x, y: tr, type: "scatter", mode: "lines", name: "Signal", line: { color: "#0071e3", width: 2 } },
-          { x: xIdl, y: tr, type: "scatter", mode: "lines", name: "Idler", line: { color: "#d32f2f", width: 2 } },
-        ];
-        layout = yLayout("Temp range (K·cm)", "Wavelength (nm)");
-        layout.yaxis.type = "log";
-      } else if (yKey === "opoBwGHzCm") {
-        const opoBw = enhanced.map(r => r.opoBwGHzCm);
-        const xIdl = enhanced.map(r => r.idlerNm);
-        traces = [
-          { x, y: opoBw, type: "scatter", mode: "lines", name: "Signal", line: { color: "#0071e3", width: 2 } },
-          { x: xIdl, y: opoBw, type: "scatter", mode: "lines", name: "Idler", line: { color: "#d32f2f", width: 2 } },
-        ];
-        layout = yLayout("OPO-BW (GHz·cm)", "Wavelength (nm)");
-        layout.yaxis.type = "log";
-      } else if (yKey === "gviAll") {
-        const polText = document.getElementById("polarization").selectedOptions[0]?.textContent || "";
-        traces = qpmRedWaveTraces(data, r => r.gviSignal, r => r.gviIdler, polText);
-        layout = yLayout("c/group velocity", "Wavelength [nm]");
-        const pumpGvi = data[0]?.gviPump;
-        if (Number.isFinite(pumpGvi)) {
-          layout.annotations = [{
-            xref: "paper", yref: "paper", x: 0.5, y: 0.93,
-            text: "Blue c/group vel. = " + pumpGvi.toFixed(3),
-            showarrow: false,
-            font: { color: "#1d1d1f" },
-          }];
-        }
+      } else {
+        const y = enhanced.map(r => r[yKey]);
+        if (!y.some(v => Number.isFinite(v) && Math.abs(v) < 1e10)) throw new Error("No valid data");
+        traces = [{ x, y, type: "scatter", mode: "lines", line: { color: "#0071e3", width: 2 } }];
       }
-    }
-
-    function yLayout(yLabel, xLabel) {
-      return {
+      layout = {
         margin: { t: 24, r: 16, b: 48, l: 56 },
-        xaxis: { title: xLabel || "Signal wavelength (nm)", range: [Math.min(r1, r2), Math.max(r1, r2)], showgrid: true, gridcolor: "#eee" },
-        yaxis: { title: yLabel, showgrid: true, gridcolor: "#eee" },
+        xaxis: { title: "Signal wavelength (nm)", range: [Math.min(r1, r2), Math.max(r1, r2)], showgrid: true, gridcolor: "#eee" },
+        yaxis: { title: labels[yKey] || yKey, showgrid: true, gridcolor: "#eee" },
         paper_bgcolor: "transparent", plot_bgcolor: "transparent",
         font: { family: "-apple-system, BlinkMacSystemFont, sans-serif", size: 12, color: "#6e6e73" },
         hovermode: "x unified", legend: { orientation: "h", y: 1.08 },
       };
     }
+
     Plotly.newPlot("chart", traces, layout, { responsive: true, displayModeBar: true });
     renderQpmTable(data, isTuning);
     document.getElementById("tableWrap").style.display = "block";

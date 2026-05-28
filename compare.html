@@ -8,10 +8,11 @@
   *, *::before, *::after { box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0; padding: 1.5rem;
+    margin: 0; padding: 1.5rem 0;
     background: #f5f5f7; color: #1d1d1f;
   }
-  .container { max-width: 1400px; margin: 0 auto; }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1400px) 220px; }
+  .container { grid-column: 2; padding: 0 1rem; }
   h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.25rem; }
   p.sub { color: #6e6e73; margin: 0 0 1rem; font-size: 0.875rem; }
   .card {
@@ -70,6 +71,101 @@
     table { font-size: 0.75rem; }
     th { background: #eee; }
   }
+  .sidebar { padding: 0 1rem; position: sticky; top: 2rem; margin-top: 1rem; }
+  .sidebar-left { grid-column: 1; }
+  .sidebar-right { grid-column: 3; }
+  .sidebar a { text-decoration: none; color: inherit; }
+  .sidebar img { width: 100%; border-radius: 8px; display: block; }
+  .sidebar p { font-size: 0.75rem; color: #6e6e73; line-height: 1.4; margin: 0.5rem 0; }
+  :root {
+    --bg: #edf3fb;
+    --card: #fff;
+    --card-soft: #f8fbff;
+    --ink: #172033;
+    --muted: #64748b;
+    --line: #d8e2ef;
+    --accent: #0071e3;
+    --accent-dark: #005bb8;
+    --accent-soft: #e8f3ff;
+    --danger: #d32f2f;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, .08), 0 10px 24px rgba(15, 23, 42, .04);
+    --shadow: 0 16px 36px rgba(15, 23, 42, .12);
+    --focus: 0 0 0 3px rgba(0, 113, 227, .18);
+  }
+  body {
+    background: radial-gradient(circle at top left, rgba(0,113,227,.13), transparent 34rem), linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+    color: var(--ink);
+  }
+  .layout { justify-content: center; }
+  .container { width: 100%; }
+  .page-header {
+    position: relative; overflow: hidden; margin-bottom: 1.1rem; padding: 1.15rem 1.25rem;
+    border: 1px solid rgba(0,113,227,.14); border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(243,248,255,.94));
+    box-shadow: var(--shadow);
+  }
+  .page-header::before {
+    content: ""; position: absolute; inset: -3rem auto auto -3rem; width: 9rem; height: 9rem;
+    background: radial-gradient(circle, rgba(0,113,227,.16), transparent 68%); pointer-events: none;
+  }
+  .page-header > * { position: relative; }
+  .page-kicker { color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .page-header h1 { margin: .15rem 0 .35rem; font-size: 1.7rem; letter-spacing: -.03em; color: var(--ink); }
+  .page-header .sub { margin: 0; color: var(--muted); }
+  .module-nav { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .95rem; }
+  .module-nav a, .module-nav .nav-current {
+    display: inline-flex; align-items: center; min-height: 2rem; padding: .35rem .7rem;
+    border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted);
+    font-size: .8125rem; font-weight: 650; line-height: 1; text-decoration: none;
+  }
+  .module-nav a:hover { border-color: rgba(0,113,227,.35); background: var(--accent-soft); color: var(--accent); }
+  .module-nav .nav-current { border-color: var(--accent); background: var(--accent); color: #fff; box-shadow: 0 8px 18px rgba(0,113,227,.22); }
+  .card { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  label { color: var(--muted); letter-spacing: .01em; }
+  select, input, textarea {
+    border-color: var(--line); border-radius: var(--radius-sm); color: var(--ink);
+    box-shadow: inset 0 1px 1px rgba(15,23,42,.03); transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  select:hover, input:hover, textarea:hover { border-color: #b7c7da; }
+  select:focus, input:focus, textarea:focus { border-color: var(--accent); box-shadow: var(--focus); }
+  input[type="checkbox"], input[type="radio"] { width: auto; accent-color: var(--accent); }
+  button {
+    background: linear-gradient(180deg, #0b7bea, var(--accent)); border: 1px solid rgba(255,255,255,.25);
+    border-radius: var(--radius-sm); box-shadow: 0 8px 16px rgba(0,113,227,.2); transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  button:hover { background: linear-gradient(180deg, #0a72db, var(--accent-dark)); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,91,184,.24); }
+  button:disabled { transform: none; box-shadow: none; }
+  button.secondary, button.sec { background: #eef3fa; color: var(--ink); border-color: var(--line); box-shadow: none; }
+  button.secondary:hover, button.sec:hover { background: #e2e9f3; box-shadow: none; }
+  button.danger { background: var(--danger); border-color: transparent; }
+  button.danger:hover { background: #b71c1c; }
+  .result, .crystal-info { background: var(--card-soft); border-color: var(--line); border-radius: var(--radius-sm); }
+  .sidebar { align-self: start; padding: 0 .75rem; }
+  .ad-card {
+    display: block; padding: .8rem; border: 1px solid var(--line); border-radius: 18px;
+    background: rgba(255,255,255,.94); box-shadow: var(--shadow-sm); color: var(--ink); text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .ad-card:hover { transform: translateY(-2px); border-color: rgba(0,113,227,.32); box-shadow: var(--shadow); }
+  .ad-card img { width: 100%; height: 170px; object-fit: contain; padding: .35rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .ad-kicker { display: block; margin-bottom: .45rem; color: var(--accent); font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  .ad-title { display: block; margin-top: .7rem; font-size: .95rem; line-height: 1.2; }
+  .ad-card p { color: var(--muted); font-size: .75rem; line-height: 1.45; margin: .45rem 0 .7rem; }
+  .ad-cta { color: var(--accent); font-size: .75rem; font-weight: 700; }
+  .wrap { border-radius: var(--radius); }
+  table { border-collapse: separate; border-spacing: 0; }
+  th { background: #f4f8fc; color: var(--muted); }
+  th, td { border-bottom-color: var(--line); }
+  tbody tr:nth-child(even) { background: #fbfdff; }
+  tbody tr:hover { background: #eef6ff; }
+  .crystal-grid { background: var(--card-soft); border-color: var(--line); }
+  .crystal-grid label { border-radius: 8px; padding: .18rem .25rem; }
+  .crystal-grid label:hover { background: #fff; }
+  @media (max-width: 1100px) { .layout { display: block; } .container { padding: 0 1rem; } .sidebar { display: none; } }
+  @media (max-width: 640px) { body { padding: 1rem 0; } .page-header { padding: 1rem; } .page-header h1 { font-size: 1.45rem; } .grid { grid-template-columns: 1fr; } }
+  @media print { body { background: #fff; } .page-header, .card { box-shadow: none; } .sidebar { display: none !important; } }
 </style>
 
 <script>
@@ -2491,12 +2587,7 @@ var QmixEngineBundle = (() => {
     if (!pol) throw new Error(`Polarization index ${polIndex} out of range`);
     let lambdaP = pumpNm, blue = Math.min(red1Nm, red2Nm), red = Math.max(red1Nm, red2Nm), nPumpVec = CrystalDB.compute(crystal, temperatureKelvin, lambdaP);
     if (nPumpVec.some((v) => v === 0)) return [];
-    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), hlCoeff = entry.hotLengthCoeffs[polIndex], alpha = 0;
-    if (hlCoeff) {
-      let hlT = 1 + hlCoeff.lin * (temperatureKelvin - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin - hlCoeff.Tref) ** 2;
-      alpha = 1 + hlCoeff.lin * (temperatureKelvin + 1 - hlCoeff.Tref) + hlCoeff.quad * (temperatureKelvin + 1 - hlCoeff.Tref) ** 2 - hlT;
-    }
-    let type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
+    let numPol = nPumpVec.length, polI = [axisIndex(numPol, pol[0]), axisIndex(numPol, pol[1]), axisIndex(numPol, pol[2])], iz = polI[2], i1 = polI[0], i2 = polI[1], nPump = nPumpVec[iz], ntPump = rc(crystal, temperatureKelvin + 1, lambdaP, iz), nnPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP - 1e-7), iz), npPump = rc(crystal, temperatureKelvin, 1 / (1 / lambdaP + 1e-7), iz), type1 = pol[0] === pol[1], range = type1 ? [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), lambdaP * 2] : [Math.min(blue, 1 / (1 / lambdaP - 1 / red)), Math.max(red, 1 / (1 / lambdaP - 1 / blue))], npts = type1 ? 200 : 400, deltaLambda = (range[1] - range[0]) / npts, rows = [];
     for (let i = 0; i < npts; i++) {
       let lambdaI = range[0] + deltaLambda * i, lambdaS = 1 / (1 / lambdaP - 1 / lambdaI);
       if (!Number.isFinite(lambdaS) || lambdaS <= 0 || lambdaS < 0.9 * lambdaP) continue;
@@ -2506,7 +2597,7 @@ var QmixEngineBundle = (() => {
       if (nIn === 0 || nI === 0 || nIp === 0) continue;
       let omegaN = nPump / lambdaP - nS / lambdaS - nI / lambdaI;
       if (Math.abs(omegaN) < 1e-20) continue;
-      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / (1 + alpha) - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / grpS), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / grpI), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / grpP);
+      let periodUm = 1e-3 / Math.abs(omegaN), nStZ = rc(crystal, temperatureKelvin + 1, lambdaS, i1), nItZ = rc(crystal, temperatureKelvin + 1, lambdaI, i2), tempRange = Math.abs(1e-7 / (omegaN / 1 - ntPump / lambdaP + nStZ / lambdaS + nItZ / lambdaI)), gviS = 0.5 * (nS + nSp + 1e7 * ((1e-7 + 2 / lambdaS) * (nSp - nS))), gviI = 0.5 * (nI + nIp + 1e7 * ((1e-7 + 2 / lambdaI) * (nIp - nI))), gviP = 0.5 * (nPump + npPump + 1e7 * (1e-7 + 2 / lambdaP) * (npPump - nPump)), grpS = 0.5 * (nS + nSn + 1e7 * (-1e-7 + 2 / lambdaS) * (nS - nSn)), grpI = 0.5 * (nI + nIn + 1e7 * (-1e-7 + 2 / lambdaI) * (nI - nIn)), grpP = 0.5 * (nPump + nnPump + 1e7 * (-1e-7 + 2 / lambdaP) * (nPump - nnPump)), gddS = -5.8946 * gviS * gviS * 3e6 * (1 / gviS - 1 / Math.abs(grpS)), gddI = -5.8946 * gviI * gviI * 3e6 * (1 / gviI - 1 / Math.abs(grpI)), gddP = -5.8946 * gviP * gviP * 3e6 * (1 / gviP - 1 / Math.abs(grpP));
       rows.push({
         signalNm: lambdaS,
         idlerNm: lambdaI,
@@ -2753,9 +2844,29 @@ window.fetch = inlineFetch;
 </script>
 </head>
 <body>
+<div class="layout">
+<div class="sidebar sidebar-left">
+  <a class="ad-card" href="https://as-photonics.com/book" target="_blank" rel="noopener">
+    <span class="ad-kicker">Textbook</span>
+    <img src="thebook.webp" alt="The Book">
+    <strong class="ad-title">Understand the numbers</strong>
+    <p>Do you actually want to understand what all those numbers mean? <em>The Book</em> teaches nonlinear optics from the ground up, so you can get the most out of Qmix.</p>
+    <span class="ad-cta">Learn more</span>
+  </a>
+</div>
 <div class="container">
-  <h1>Qmix &mdash; Crystal comparison</h1>
-  <p class="sub">Compare phase-matching across multiple crystals at fixed wavelengths</p>
+  <header class="page-header">
+    <div class="page-kicker">Qmix toolkit</div>
+    <h1>Qmix &mdash; Crystal comparison</h1>
+    <p class="sub">Compare phase-matching across multiple crystals at fixed wavelengths</p>
+    <nav class="module-nav" aria-label="Qmix modules">
+      <a href="index.html">Qmix</a>
+      <span class="nav-current">Compare crystals</span>
+      <a href="qpm.html">QPM</a>
+      <a href="refractive-index.html">Refractive index</a>
+      <a href="custom.html">Custom crystals</a>
+    </nav>
+  </header>
 
   <div class="card">
     <div class="row">
@@ -2807,7 +2918,6 @@ window.fetch = inlineFetch;
             <th data-col="l2">&lambda;&#8322; <span class="sort-icon"></span></th>
             <th data-col="l3">&lambda;&#8323; <span class="sort-icon"></span></th>
             <th data-col="deff">d_eff <span class="sort-icon"></span></th>
-            <th data-col="gvi">GVI <span class="sort-icon"></span></th>
             <th data-col="temp">Temp. <span class="sort-icon"></span></th>
             <th data-col="angtol">Ang. tol. <span class="sort-icon"></span></th>
             <th data-col="s0l2">S<sub>o</sub>L&sup2; <span class="sort-icon"></span></th>
@@ -2819,6 +2929,16 @@ window.fetch = inlineFetch;
       </table>
     </div>
   </div>
+</div>
+<div class="sidebar sidebar-right">
+  <a class="ad-card" href="https://as-photonics.com/mlSNLO" target="_blank" rel="noopener">
+    <span class="ad-kicker">Software</span>
+    <img src="mlSNLO.webp" alt="mlSNLO">
+    <strong class="ad-title">Automate design scans</strong>
+    <p><strong>mlSNLO</strong> is a versatile MATLAB App for nonlinear optics. Write batch scripts to automate calculations and explore design spaces.</p>
+    <span class="ad-cta">Explore mlSNLO</span>
+  </a>
+</div>
 </div>
 
 <script>
@@ -2878,7 +2998,7 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
   const planes = ["XY", "XZ", "YZ"];
 
   const tbody = document.getElementById("resultsBody");
-  tbody.innerHTML = "<tr><td colspan='15' style='text-align:center;color:#999;padding:2rem'>Calculating...</td></tr>";
+  tbody.innerHTML = "<tr><td colspan='14' style='text-align:center;color:#999;padding:2rem'>Calculating...</td></tr>";
 
   const rows = [];
 
@@ -2901,7 +3021,6 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
         for (const r of data) {
           rows.push({
             crystal,
-            crystalType: type,
             plane,
             polarizations: r.polarizations,
             thetaDeg: r.thetaDeg,
@@ -2913,7 +3032,6 @@ document.getElementById("calcBtn").addEventListener("click", async () => {
             angleToleranceMradCm: r.angleToleranceMradCm,
             walkoffMrad: r.walkoffMrad,
             gddFs2PerMm: r.gddFs2PerMm,
-            groupVelocityIndex: r.groupVelocityIndex,
           });
         }
       } catch {}
@@ -2943,7 +3061,7 @@ function renderTable(rows) {
   const tbody = document.getElementById("resultsBody");
 
   if (filtered.length === 0) {
-    tbody.innerHTML = "<tr><td colspan='15' style='text-align:center;color:#999;padding:2rem'>No results</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='14' style='text-align:center;color:#999;padding:2rem'>No results</td></tr>";
     return;
   }
 
@@ -2979,7 +3097,6 @@ function getSortValue(row, col) {
     case "l2": return row.wavelengthsNm[1];
     case "l3": return row.wavelengthsNm[2];
     case "deff": return row.dEffPmPerV;
-    case "gvi": return row.groupVelocityIndex ? Math.max(...row.groupVelocityIndex) : 0;
     case "temp": return row.temperatureRangeKCm;
     case "angtol": return row.angleToleranceMradCm;
     case "s0l2": return row.s0L2Watt;
@@ -2995,22 +3112,16 @@ function renderRows(rows) {
     const w = r.wavelengthsNm;
     const wo = r.walkoffMrad.map(v => v.toFixed(2)).join(", ");
     const zeroClass = r.dEffPmPerV === 0 ? "zero" : "";
-    const isUniaxial = r.crystalType === "uniaxial";
-    const planeCell = isUniaxial ? "\u2014" : r.plane;
-    const phiCell = isUniaxial ? "\u2014" : r.phiDeg.toFixed(4);
-    const gvi = r.groupVelocityIndex;
-    const gviCell = gvi ? gvi.map(function(v) { return v.toFixed(4); }).join(", ") : "";
     return `<tr class="${zeroClass}">
       <td>${r.crystal}</td>
-      <td>${planeCell}</td>
+      <td>${r.plane}</td>
       <td>${r.polarizations}</td>
       <td>${r.thetaDeg.toFixed(4)}</td>
-      <td>${phiCell}</td>
+      <td>${r.phiDeg.toFixed(4)}</td>
       <td>${w[0].toFixed(2)}</td>
       <td>${w[1].toFixed(2)}</td>
       <td>${w[2].toFixed(2)}</td>
       <td>${r.dEffPmPerV !== 0 ? r.dEffPmPerV.toExponential(3) : "0"}</td>
-      <td>${gviCell}</td>
       <td>${r.temperatureRangeKCm > 1e5 ? "\u221E" : r.temperatureRangeKCm.toFixed(2)}</td>
       <td>${r.angleToleranceMradCm.toFixed(4)}</td>
       <td>${r.s0L2Watt !== undefined ? r.s0L2Watt.toExponential(3) : ""}</td>
@@ -3044,22 +3155,17 @@ document.getElementById("results").addEventListener("click", (e) => {
 document.getElementById("exportCsv").addEventListener("click", () => {
   const rows = getTableData();
   if (!rows.length) return;
-  const header = "Crystal,Plane,Pol,Theta(deg),Phi(deg),Lambda1(nm),Lambda2(nm),Lambda3(nm),d_eff(pm/V),GVI,Temp(K-cm),AngTol(mrad-cm),S_oL2(W),Walkoff(mrad),GDD(fs2/mm)";
-  const csv = [header, ...rows.map(r => {
-    const isUniaxial = r.crystalType === "uniaxial";
-    return [
-      r.crystal, isUniaxial ? "" : r.plane, r.polarizations, r.thetaDeg.toFixed(4),
-      isUniaxial ? "" : r.phiDeg.toFixed(4),
-      r.wavelengthsNm[0].toFixed(2), r.wavelengthsNm[1].toFixed(2), r.wavelengthsNm[2].toFixed(2),
-      r.dEffPmPerV !== 0 ? r.dEffPmPerV.toExponential(3) : "0",
-      r.groupVelocityIndex ? r.groupVelocityIndex.map(function(v) { return v.toFixed(4); }).join(";") : "",
-      r.temperatureRangeKCm > 1e5 ? "" : r.temperatureRangeKCm.toFixed(2),
-      r.angleToleranceMradCm.toFixed(4),
-      r.s0L2Watt !== undefined ? r.s0L2Watt.toExponential(3) : "",
-      r.walkoffMrad.map(v => v.toFixed(2)).join(";"),
-      r.gddFs2PerMm.map(v => v.toFixed(1)).join(";"),
-    ].join(",");
-  })].join("\n");
+  const header = "Crystal,Plane,Pol,Theta(deg),Phi(deg),Lambda1(nm),Lambda2(nm),Lambda3(nm),d_eff(pm/V),S_oL2(W),Temp(K-cm),AngTol(mrad-cm),Walkoff(mrad),GDD(fs2/mm)";
+  const csv = [header, ...rows.map(r => [
+    r.crystal, r.plane, r.polarizations, r.thetaDeg.toFixed(4), r.phiDeg.toFixed(4),
+    r.wavelengthsNm[0].toFixed(2), r.wavelengthsNm[1].toFixed(2), r.wavelengthsNm[2].toFixed(2),
+    r.dEffPmPerV !== 0 ? r.dEffPmPerV.toExponential(3) : "0",
+    r.s0L2Watt !== undefined ? r.s0L2Watt.toExponential(3) : "",
+    r.temperatureRangeKCm > 1e5 ? "" : r.temperatureRangeKCm.toFixed(2),
+    r.angleToleranceMradCm.toFixed(4),
+    r.walkoffMrad.map(v => v.toFixed(2)).join(";"),
+    r.gddFs2PerMm.map(v => v.toFixed(1)).join(";"),
+  ].join(","))].join("\n");
   download(csv, "qmix-comparison.csv", "text/csv");
 });
 
@@ -3077,9 +3183,9 @@ function getTableData() {
   const tbody = document.getElementById("resultsBody");
   for (const tr of tbody.querySelectorAll("tr")) {
     const td = tr.querySelectorAll("td");
-    if (td.length < 15) continue;
-    const walkoff = td[13].textContent.split(", ").map(Number);
-    const gdd = td[14].textContent.split(", ").map(Number);
+    if (td.length < 14) continue;
+    const walkoff = td[12].textContent.split(", ").map(Number);
+    const gdd = td[13].textContent.split(", ").map(Number);
     rows.push({
       crystal: td[0].textContent,
       plane: td[1].textContent,
@@ -3088,8 +3194,7 @@ function getTableData() {
       phiDeg: parseFloat(td[4].textContent),
       wavelengthsNm: [parseFloat(td[5].textContent), parseFloat(td[6].textContent), parseFloat(td[7].textContent)],
       dEffPmPerV: parseFloat(td[8].textContent),
-      groupVelocityIndex: td[9].textContent.split(", ").map(Number),
-      s0L2Watt: parseFloat(td[12].textContent) || 0,
+      s0L2Watt: parseFloat(td[9].textContent) || 0,
       temperatureRangeKCm: parseFloat(td[10].textContent),
       angleToleranceMradCm: parseFloat(td[11].textContent),
       walkoffMrad: walkoff,
